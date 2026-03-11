@@ -1,0 +1,2223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriFeed ERP — Animal Feeds Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #0e1108;
+      --bg2:       #161b0e;
+      --bg3:       #1c2412;
+      --surface:   #212d16;
+      --border:    #2e3d1f;
+      --border2:   #3d5227;
+      --accent:    #8dbd3a;
+      --accent2:   #b4e04f;
+      --accent3:   #5a8a0e;
+      --amber:     #d4a832;
+      --amber2:    #f0c84a;
+      --red:       #d64045;
+      --teal:      #3abda6;
+      --muted:     #5c7040;
+      --text:      #d8e8b8;
+      --text2:     #a8bf80;
+      --text3:     #6b8348;
+      --white:     #f0f7e0;
+      --font-head: 'Syne', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+      --font-body: 'Libre Baskerville', serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── SIDEBAR ─────────────────────────────── */
+    .sidebar {
+      width: 240px;
+      min-width: 240px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-badge {
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      font-family: var(--font-head);
+      font-weight: 800;
+      font-size: 17px;
+      color: var(--white);
+      letter-spacing: -0.3px;
+    }
+
+    .logo-sub {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .sidebar-section {
+      padding: 16px 0 8px;
+    }
+
+    .sidebar-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text3);
+      padding: 0 20px 8px;
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 20px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all 0.15s ease;
+      font-family: var(--font-head);
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text3);
+      text-decoration: none;
+    }
+
+    .nav-item:hover {
+      background: var(--surface);
+      color: var(--text);
+      border-left-color: var(--border2);
+    }
+
+    .nav-item.active {
+      background: rgba(141, 189, 58, 0.1);
+      color: var(--accent2);
+      border-left-color: var(--accent);
+    }
+
+    .nav-item .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--accent3);
+      color: var(--accent2);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 10px;
+    }
+
+    .nav-badge.amber { background: rgba(212,168,50,0.2); color: var(--amber2); }
+    .nav-badge.red   { background: rgba(214,64,69,0.2); color: #f08084; }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .user-card {
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .user-avatar {
+      width: 32px; height: 32px;
+      background: var(--accent3);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--accent2);
+    }
+
+    .user-info { flex: 1; }
+    .user-name { font-family: var(--font-head); font-size: 12px; font-weight: 600; color: var(--text); }
+    .user-role { font-family: var(--font-mono); font-size: 9px; color: var(--text3); }
+
+    /* ── MAIN ─────────────────────────────────── */
+    .main {
+      margin-left: 240px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 60px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 32px;
+      gap: 16px;
+      position: sticky; top: 0; z-index: 50;
+    }
+
+    .page-title {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--white);
+      flex: 1;
+    }
+
+    .topbar-actions { display: flex; align-items: center; gap: 12px; }
+
+    .search-box {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text3);
+      cursor: text;
+    }
+
+    .btn {
+      font-family: var(--font-head);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 7px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0e1108;
+    }
+
+    .btn-primary:hover { background: var(--accent2); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text2);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover { background: var(--surface); color: var(--text); }
+
+    .btn-amber {
+      background: var(--amber);
+      color: #0e1108;
+    }
+
+    .btn-red {
+      background: rgba(214,64,69,0.15);
+      color: #f08084;
+      border: 1px solid rgba(214,64,69,0.3);
+    }
+
+    /* ── PAGE CONTENT ─────────────────────────── */
+    .page {
+      display: none;
+      padding: 32px;
+      flex: 1;
+    }
+
+    .page.active { display: block; }
+
+    /* ── CARDS ────────────────────────────────── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .kpi-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    .kpi-card.amber::before { background: var(--amber); }
+    .kpi-card.red::before   { background: var(--red); }
+    .kpi-card.teal::before  { background: var(--teal); }
+
+    .kpi-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text3);
+      margin-bottom: 10px;
+    }
+
+    .kpi-value {
+      font-family: var(--font-head);
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .kpi-sub {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .kpi-change {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      margin-top: 4px;
+    }
+
+    .kpi-change.up   { color: var(--accent2); }
+    .kpi-change.down { color: #f08084; }
+
+    /* ── SECTION HEADER ───────────────────────── */
+    .section-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--white);
+    }
+
+    /* ── TABLE ────────────────────────────────── */
+    .table-wrap {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead tr {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text3);
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 500;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface); }
+
+    td {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text2);
+      padding: 12px 16px;
+    }
+
+    td.primary {
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ── BADGES ───────────────────────────────── */
+    .badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .badge-green  { background: rgba(141,189,58,0.15); color: var(--accent2); }
+    .badge-amber  { background: rgba(212,168,50,0.15); color: var(--amber2); }
+    .badge-red    { background: rgba(214,64,69,0.15);  color: #f08084; }
+    .badge-teal   { background: rgba(58,189,166,0.15); color: var(--teal); }
+    .badge-gray   { background: rgba(92,112,64,0.2);   color: var(--text3); }
+
+    /* ── GRID LAYOUTS ─────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* ── CHART PLACEHOLDER ────────────────────── */
+    .chart-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .chart-title {
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 120px;
+    }
+
+    .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+
+    .bar {
+      width: 100%;
+      background: var(--accent3);
+      border-radius: 3px 3px 0 0;
+      transition: background 0.2s;
+    }
+
+    .bar:hover { background: var(--accent); }
+    .bar.amber { background: rgba(212,168,50,0.4); }
+    .bar.amber:hover { background: var(--amber); }
+
+    .bar-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text3);
+      text-align: center;
+    }
+
+    /* ── PROGRESS ─────────────────────────────── */
+    .progress-bar {
+      height: 6px;
+      background: var(--surface);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+
+    .progress-fill.amber { background: var(--amber); }
+    .progress-fill.red   { background: var(--red); }
+
+    /* ── ACTIVITY FEED ────────────────────────── */
+    .activity-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .activity-item:last-child { border-bottom: none; }
+
+    .activity-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .activity-dot.amber { background: var(--amber); }
+    .activity-dot.red   { background: var(--red); }
+    .activity-dot.teal  { background: var(--teal); }
+
+    .activity-text {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+
+    .activity-time {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text3);
+      margin-top: 2px;
+    }
+
+    /* ── FORM ─────────────────────────────────── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text3);
+    }
+
+    .form-input, .form-select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 9px 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      width: 100%;
+    }
+
+    .form-input:focus, .form-select:focus {
+      border-color: var(--accent3);
+    }
+
+    .form-input::placeholder { color: var(--text3); }
+
+    /* ── MODAL ────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(14,17,8,0.8);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 14px;
+      padding: 28px;
+      width: 560px;
+      max-width: 95vw;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .modal-title {
+      font-family: var(--font-head);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .modal-close {
+      background: none; border: none; cursor: pointer;
+      color: var(--text3); font-size: 18px;
+    }
+
+    .modal-close:hover { color: var(--text); }
+
+    .modal-footer {
+      display: flex; justify-content: flex-end; gap: 10px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── STAT ROW ─────────────────────────────── */
+    .stat-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat-row:last-child { border-bottom: none; }
+
+    .stat-row-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text3);
+    }
+
+    .stat-row-value {
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ── ALERT ────────────────────────────────── */
+    .alert {
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .alert-amber { background: rgba(212,168,50,0.1); border: 1px solid rgba(212,168,50,0.3); color: var(--amber2); }
+    .alert-red   { background: rgba(214,64,69,0.1);  border: 1px solid rgba(214,64,69,0.3);  color: #f08084; }
+    .alert-green { background: rgba(141,189,58,0.1); border: 1px solid rgba(141,189,58,0.3); color: var(--accent2); }
+
+    /* ── SCROLLBAR ────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+    /* ── ANIMATE ──────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .page.active > * { animation: fadeUp 0.3s ease both; }
+    .page.active > *:nth-child(2) { animation-delay: 0.05s; }
+    .page.active > *:nth-child(3) { animation-delay: 0.10s; }
+    .page.active > *:nth-child(4) { animation-delay: 0.15s; }
+
+    /* ── TABS ─────────────────────────────────── */
+    .tabs { display: flex; gap: 4px; margin-bottom: 20px; }
+
+    .tab {
+      font-family: var(--font-head);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 7px;
+      cursor: pointer;
+      color: var(--text3);
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .tab:hover { color: var(--text2); background: var(--surface); }
+    .tab.active { background: rgba(141,189,58,0.12); color: var(--accent2); border-color: var(--accent3); }
+
+    /* ── EMPTY STATE ──────────────────────────── */
+    .empty {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text3);
+    }
+
+    .empty-icon { font-size: 36px; margin-bottom: 12px; }
+    .empty-text { font-family: var(--font-head); font-size: 14px; color: var(--text3); }
+
+    /* ── PRODUCT CARD ─────────────────────────── */
+    .product-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+    .product-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+
+    .product-card:hover {
+      border-color: var(--border2);
+      transform: translateY(-1px);
+    }
+
+    .product-card-icon {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .product-card-name {
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .product-card-sku {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text3);
+      margin-bottom: 10px;
+    }
+
+    .product-card-stock {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .stock-num {
+      font-family: var(--font-head);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--white);
+    }
+
+    .stock-unit {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text3);
+    }
+
+    /* ── ROUTE MAP ────────────────────────────── */
+    .route-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .route-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .route-stops {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .route-stop {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 8px 0;
+      position: relative;
+    }
+
+    .stop-line {
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .stop-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .stop-dot.gray { background: var(--muted); }
+
+    .stop-connector {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+    }
+
+    .stop-info { flex: 1; padding-bottom: 4px; }
+
+    .stop-name {
+      font-family: var(--font-head);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .stop-detail {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text3);
+    }
+
+    /* ── RESPONSIVE ───────────────────────────── */
+    @media (max-width: 1200px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .product-cards { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══════════════════════════════════ -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-badge">
+      <div class="logo-icon">🌾</div>
+      <div>
+        <div class="logo-text">AgriFeed</div>
+        <div class="logo-sub">ERP Platform</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Overview</div>
+    <a class="nav-item active" onclick="showPage('dashboard')">
+      <span class="nav-icon">⬡</span> Dashboard
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Operations</div>
+    <a class="nav-item" onclick="showPage('inventory')">
+      <span class="nav-icon">📦</span> Inventory
+      <span class="nav-badge amber">3</span>
+    </a>
+    <a class="nav-item" onclick="showPage('stocks')">
+      <span class="nav-icon">🏗</span> Stock Ledger
+    </a>
+    <a class="nav-item" onclick="showPage('procurement')">
+      <span class="nav-icon">🔄</span> Procurement
+      <span class="nav-badge">5</span>
+    </a>
+    <a class="nav-item" onclick="showPage('purchases')">
+      <span class="nav-icon">🧾</span> Purchases
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Commerce</div>
+    <a class="nav-item" onclick="showPage('sales')">
+      <span class="nav-icon">💰</span> Sales Orders
+      <span class="nav-badge red">2</span>
+    </a>
+    <a class="nav-item" onclick="showPage('distribution')">
+      <span class="nav-icon">🚚</span> Distribution
+    </a>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Master Data</div>
+    <a class="nav-item" onclick="showPage('products')">
+      <span class="nav-icon">🐄</span> Products
+    </a>
+    <a class="nav-item" onclick="showPage('suppliers')">
+      <span class="nav-icon">🤝</span> Suppliers
+    </a>
+    <a class="nav-item" onclick="showPage('customers')">
+      <span class="nav-icon">👥</span> Customers
+    </a>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar">JO</div>
+      <div class="user-info">
+        <div class="user-name">James Odhiambo</div>
+        <div class="user-role">Stock Manager</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══════════════════════════════════════ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="page-title" id="page-title">Dashboard</div>
+    <div class="topbar-actions">
+      <div class="search-box">🔍 &nbsp;Search records...</div>
+      <button class="btn btn-ghost">⚙ Settings</button>
+      <button class="btn btn-primary" onclick="openModal()">+ New Record</button>
+    </div>
+  </div>
+
+  <!-- ══ DASHBOARD ══════════════════════════════ -->
+  <div class="page active" id="page-dashboard">
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Stock Value</div>
+        <div class="kpi-value">KES 4.2M</div>
+        <div class="kpi-sub">Across 6 warehouses</div>
+        <div class="kpi-change up">↑ 8.4% vs last month</div>
+      </div>
+      <div class="kpi-card amber">
+        <div class="kpi-label">Pending Purchases</div>
+        <div class="kpi-value">12</div>
+        <div class="kpi-sub">Orders awaiting approval</div>
+        <div class="kpi-change down">↑ 3 new this week</div>
+      </div>
+      <div class="kpi-card teal">
+        <div class="kpi-label">Sales This Month</div>
+        <div class="kpi-value">KES 1.8M</div>
+        <div class="kpi-sub">84 orders fulfilled</div>
+        <div class="kpi-change up">↑ 12.1% vs last month</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Low Stock Alerts</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-sub">Items below reorder level</div>
+        <div class="kpi-change down">Needs immediate action</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:24px;">
+      <div class="chart-card">
+        <div class="chart-title">Monthly Sales — Bags Sold (MT)</div>
+        <div class="bar-chart">
+          <div class="bar-col"><div class="bar" style="height:55%"></div><div class="bar-label">Aug</div></div>
+          <div class="bar-col"><div class="bar" style="height:70%"></div><div class="bar-label">Sep</div></div>
+          <div class="bar-col"><div class="bar" style="height:60%"></div><div class="bar-label">Oct</div></div>
+          <div class="bar-col"><div class="bar" style="height:80%"></div><div class="bar-label">Nov</div></div>
+          <div class="bar-col"><div class="bar" style="height:65%"></div><div class="bar-label">Dec</div></div>
+          <div class="bar-col"><div class="bar" style="height:90%"></div><div class="bar-label">Jan</div></div>
+          <div class="bar-col"><div class="bar" style="height:75%"></div><div class="bar-label">Feb</div></div>
+          <div class="bar-col"><div class="bar amber" style="height:85%"></div><div class="bar-label">Mar</div></div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Recent Activity</div>
+        <div class="activity-item">
+          <div class="activity-dot"></div>
+          <div>
+            <div class="activity-text">Purchase Order <strong>#PO-2024-0312</strong> approved — 500 bags Maize Meal from AgriSources Ltd</div>
+            <div class="activity-time">2 hours ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot amber"></div>
+          <div>
+            <div class="activity-text">Low stock alert: <strong>Layers Mash</strong> at Kisumu Warehouse — 42 bags remaining</div>
+            <div class="activity-time">4 hours ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot teal"></div>
+          <div>
+            <div class="activity-text">Sales Order <strong>#SO-2024-0589</strong> dispatched to Nakuru Farmers Co-op</div>
+            <div class="activity-time">6 hours ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot red"></div>
+          <div>
+            <div class="activity-text">Delivery <strong>#DLV-0214</strong> returned — 25 bags Dairy Meal rejected, quality issue</div>
+            <div class="activity-time">Yesterday, 3:40 PM</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot"></div>
+          <div>
+            <div class="activity-text">New customer <strong>Rift Valley Poultry Farm</strong> registered</div>
+            <div class="activity-time">Yesterday, 10:12 AM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="section-head">
+          <div class="section-title">Top Selling Products</div>
+          <button class="btn btn-ghost" style="font-size:11px">View All →</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Bags Sold</th>
+                <th>Revenue</th>
+                <th>vs Target</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="primary">🐔 Layers Mash 70kg</td>
+                <td>1,240</td>
+                <td>KES 372,000</td>
+                <td><span class="badge badge-green">+12%</span></td>
+              </tr>
+              <tr>
+                <td class="primary">🐄 Dairy Meal 50kg</td>
+                <td>980</td>
+                <td>KES 441,000</td>
+                <td><span class="badge badge-green">+8%</span></td>
+              </tr>
+              <tr>
+                <td class="primary">🐖 Grower Mash 50kg</td>
+                <td>760</td>
+                <td>KES 228,000</td>
+                <td><span class="badge badge-amber">-2%</span></td>
+              </tr>
+              <tr>
+                <td class="primary">🌽 Maize Germ 90kg</td>
+                <td>540</td>
+                <td>KES 162,000</td>
+                <td><span class="badge badge-green">+5%</span></td>
+              </tr>
+              <tr>
+                <td class="primary">🐟 Fish Meal 50kg</td>
+                <td>320</td>
+                <td>KES 224,000</td>
+                <td><span class="badge badge-red">-9%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-head">
+          <div class="section-title">Warehouse Capacity</div>
+        </div>
+        <div class="chart-card">
+          <div class="stat-row">
+            <div>
+              <div class="stat-row-label">Nairobi Central Warehouse</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div>
+            </div>
+            <div class="stat-row-value" style="margin-left:16px">78%</div>
+          </div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-row-label">Kisumu Distribution Hub</div>
+              <div class="progress-bar"><div class="progress-fill amber" style="width:91%"></div></div>
+            </div>
+            <div class="stat-row-value" style="margin-left:16px">91%</div>
+          </div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-row-label">Nakuru Depot</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:52%"></div></div>
+            </div>
+            <div class="stat-row-value" style="margin-left:16px">52%</div>
+          </div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-row-label">Eldoret Branch Store</div>
+              <div class="progress-bar"><div class="progress-fill red" style="width:95%"></div></div>
+            </div>
+            <div class="stat-row-value" style="margin-left:16px">95%</div>
+          </div>
+          <div class="stat-row">
+            <div>
+              <div class="stat-row-label">Mombasa Port Store</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:44%"></div></div>
+            </div>
+            <div class="stat-row-value" style="margin-left:16px">44%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ INVENTORY ════════════════════════════════ -->
+  <div class="page" id="page-inventory">
+    <div class="alert alert-amber">⚠ 3 items are below minimum reorder quantity. Review and create purchase orders immediately.</div>
+    <div class="alert alert-red">🔴 Eldoret Branch Store is at 95% capacity. Consider transfer or urgent sales push.</div>
+
+    <div class="section-head">
+      <div class="section-title">Inventory Items</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost">⬇ Export</button>
+        <button class="btn btn-primary" onclick="openModal()">+ Add Item</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active">All Items</div>
+      <div class="tab">Low Stock</div>
+      <div class="tab">By Warehouse</div>
+      <div class="tab">By Category</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Item Code</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Warehouse</th>
+            <th>Qty (Bags)</th>
+            <th>Reorder Level</th>
+            <th>Unit Cost</th>
+            <th>Total Value</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="primary">ITM-0001</td>
+            <td class="primary">🐔 Layers Mash 70kg</td>
+            <td>Poultry Feed</td>
+            <td>Nairobi Central</td>
+            <td>1,420</td>
+            <td>200</td>
+            <td>KES 300</td>
+            <td>KES 426,000</td>
+            <td><span class="badge badge-green">In Stock</span></td>
+          </tr>
+          <tr>
+            <td class="primary">ITM-0002</td>
+            <td class="primary">🐄 Dairy Meal 50kg</td>
+            <td>Livestock Feed</td>
+            <td>Kisumu Hub</td>
+            <td>42</td>
+            <td>150</td>
+            <td>KES 450</td>
+            <td>KES 18,900</td>
+            <td><span class="badge badge-red">Low Stock</span></td>
+          </tr>
+          <tr>
+            <td class="primary">ITM-0003</td>
+            <td class="primary">🐖 Grower Mash 50kg</td>
+            <td>Pig Feed</td>
+            <td>Nakuru Depot</td>
+            <td>680</td>
+            <td>100</td>
+            <td>KES 300</td>
+            <td>KES 204,000</td>
+            <td><span class="badge badge-green">In Stock</span></td>
+          </tr>
+          <tr>
+            <td class="primary">ITM-0004</td>
+            <td class="primary">🌽 Maize Germ 90kg</td>
+            <td>Raw Materials</td>
+            <td>Nairobi Central</td>
+            <td>95</td>
+            <td>200</td>
+            <td>KES 300</td>
+            <td>KES 28,500</td>
+            <td><span class="badge badge-amber">Near Reorder</span></td>
+          </tr>
+          <tr>
+            <td class="primary">ITM-0005</td>
+            <td class="primary">🐟 Fish Meal 50kg</td>
+            <td>Protein Supplement</td>
+            <td>Mombasa Port</td>
+            <td>540</td>
+            <td>80</td>
+            <td>KES 700</td>
+            <td>KES 378,000</td>
+            <td><span class="badge badge-green">In Stock</span></td>
+          </tr>
+          <tr>
+            <td class="primary">ITM-0006</td>
+            <td class="primary">🐓 Chick Mash 25kg</td>
+            <td>Poultry Feed</td>
+            <td>Eldoret Branch</td>
+            <td>60</td>
+            <td>120</td>
+            <td>KES 200</td>
+            <td>KES 12,000</td>
+            <td><span class="badge badge-red">Low Stock</span></td>
+          </tr>
+          <tr>
+            <td class="primary">ITM-0007</td>
+            <td class="primary">🐂 Beef Finisher 50kg</td>
+            <td>Livestock Feed</td>
+            <td>Nairobi Central</td>
+            <td>820</td>
+            <td>100</td>
+            <td>KES 480</td>
+            <td>KES 393,600</td>
+            <td><span class="badge badge-green">In Stock</span></td>
+          </tr>
+          <tr>
+            <td class="primary">ITM-0008</td>
+            <td class="primary">🌿 Rabbit Pellets 20kg</td>
+            <td>Small Animal</td>
+            <td>Nairobi Central</td>
+            <td>230</td>
+            <td>50</td>
+            <td>KES 250</td>
+            <td>KES 57,500</td>
+            <td><span class="badge badge-green">In Stock</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ STOCKS ════════════════════════════════ -->
+  <div class="page" id="page-stocks">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Stock Units</div>
+        <div class="kpi-value">8,387</div>
+        <div class="kpi-sub">Bags across all stores</div>
+      </div>
+      <div class="kpi-card amber">
+        <div class="kpi-label">Stock Transfers</div>
+        <div class="kpi-value">7</div>
+        <div class="kpi-sub">In transit this week</div>
+      </div>
+      <div class="kpi-card teal">
+        <div class="kpi-label">Total Stock Value</div>
+        <div class="kpi-value">KES 4.2M</div>
+        <div class="kpi-sub">At current cost</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Write-offs MTD</div>
+        <div class="kpi-value">18</div>
+        <div class="kpi-sub">Bags damaged/expired</div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <div class="section-title">Stock Ledger</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost">📅 Filter Date</button>
+        <button class="btn btn-ghost">⬇ Export CSV</button>
+        <button class="btn btn-primary" onclick="openModal()">+ Stock Entry</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Entry Date</th>
+            <th>Voucher Type</th>
+            <th>Voucher No.</th>
+            <th>Item</th>
+            <th>Warehouse</th>
+            <th>In (Bags)</th>
+            <th>Out (Bags)</th>
+            <th>Balance</th>
+            <th>Valuation Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>10-Mar-2024</td>
+            <td><span class="badge badge-teal">Purchase Receipt</span></td>
+            <td class="primary">PREC-0521</td>
+            <td>Layers Mash 70kg</td>
+            <td>Nairobi Central</td>
+            <td style="color:var(--accent2)">+500</td>
+            <td>—</td>
+            <td>1,420</td>
+            <td>KES 300</td>
+          </tr>
+          <tr>
+            <td>10-Mar-2024</td>
+            <td><span class="badge badge-amber">Sales Delivery</span></td>
+            <td class="primary">DN-0891</td>
+            <td>Dairy Meal 50kg</td>
+            <td>Kisumu Hub</td>
+            <td>—</td>
+            <td style="color:#f08084">-80</td>
+            <td>42</td>
+            <td>KES 450</td>
+          </tr>
+          <tr>
+            <td>09-Mar-2024</td>
+            <td><span class="badge badge-gray">Stock Transfer</span></td>
+            <td class="primary">STE-0112</td>
+            <td>Grower Mash 50kg</td>
+            <td>Nakuru → Eldoret</td>
+            <td>—</td>
+            <td style="color:#f08084">-120</td>
+            <td>680</td>
+            <td>KES 300</td>
+          </tr>
+          <tr>
+            <td>09-Mar-2024</td>
+            <td><span class="badge badge-teal">Purchase Receipt</span></td>
+            <td class="primary">PREC-0520</td>
+            <td>Fish Meal 50kg</td>
+            <td>Mombasa Port</td>
+            <td style="color:var(--accent2)">+200</td>
+            <td>—</td>
+            <td>540</td>
+            <td>KES 700</td>
+          </tr>
+          <tr>
+            <td>08-Mar-2024</td>
+            <td><span class="badge badge-red">Write-Off</span></td>
+            <td class="primary">WO-0043</td>
+            <td>Chick Mash 25kg</td>
+            <td>Eldoret Branch</td>
+            <td>—</td>
+            <td style="color:#f08084">-8</td>
+            <td>60</td>
+            <td>KES 200</td>
+          </tr>
+          <tr>
+            <td>08-Mar-2024</td>
+            <td><span class="badge badge-amber">Sales Delivery</span></td>
+            <td class="primary">DN-0890</td>
+            <td>Beef Finisher 50kg</td>
+            <td>Nairobi Central</td>
+            <td>—</td>
+            <td style="color:#f08084">-160</td>
+            <td>820</td>
+            <td>KES 480</td>
+          </tr>
+          <tr>
+            <td>07-Mar-2024</td>
+            <td><span class="badge badge-teal">Purchase Receipt</span></td>
+            <td class="primary">PREC-0519</td>
+            <td>Maize Germ 90kg</td>
+            <td>Nairobi Central</td>
+            <td style="color:var(--accent2)">+50</td>
+            <td>—</td>
+            <td>95</td>
+            <td>KES 300</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ PROCUREMENT ══════════════════════════════ -->
+  <div class="page" id="page-procurement">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Open RFQs</div>
+        <div class="kpi-value">5</div>
+        <div class="kpi-sub">Awaiting supplier quotes</div>
+      </div>
+      <div class="kpi-card amber">
+        <div class="kpi-label">Pending Approvals</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-sub">Purchase orders</div>
+      </div>
+      <div class="kpi-card teal">
+        <div class="kpi-label">MTD Procurement</div>
+        <div class="kpi-value">KES 680K</div>
+        <div class="kpi-sub">Material purchases</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Active Suppliers</div>
+        <div class="kpi-value">14</div>
+        <div class="kpi-sub">Approved vendors</div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <div class="section-title">Purchase Requisitions & RFQs</div>
+      <button class="btn btn-primary" onclick="openModal()">+ New Requisition</button>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active">All</div>
+      <div class="tab">Draft</div>
+      <div class="tab">Submitted</div>
+      <div class="tab">Approved</div>
+      <div class="tab">Ordered</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Req. No.</th>
+            <th>Date</th>
+            <th>Item Required</th>
+            <th>Qty (Bags)</th>
+            <th>Required By</th>
+            <th>Requested By</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="primary">PR-2024-0031</td>
+            <td>10 Mar 2024</td>
+            <td>Dairy Meal 50kg</td>
+            <td>500</td>
+            <td>15 Mar 2024</td>
+            <td>J. Odhiambo</td>
+            <td><span class="badge badge-red">Urgent</span></td>
+            <td><span class="badge badge-amber">RFQ Sent</span></td>
+            <td><button class="btn btn-ghost" style="padding:4px 10px;font-size:10px">View</button></td>
+          </tr>
+          <tr>
+            <td class="primary">PR-2024-0030</td>
+            <td>09 Mar 2024</td>
+            <td>Chick Mash 25kg</td>
+            <td>300</td>
+            <td>14 Mar 2024</td>
+            <td>A. Wanjiku</td>
+            <td><span class="badge badge-red">Urgent</span></td>
+            <td><span class="badge badge-amber">Pending Approval</span></td>
+            <td><button class="btn btn-primary" style="padding:4px 10px;font-size:10px">Approve</button></td>
+          </tr>
+          <tr>
+            <td class="primary">PR-2024-0029</td>
+            <td>08 Mar 2024</td>
+            <td>Maize Germ 90kg</td>
+            <td>200</td>
+            <td>20 Mar 2024</td>
+            <td>M. Kiprop</td>
+            <td><span class="badge badge-amber">Medium</span></td>
+            <td><span class="badge badge-teal">Ordered</span></td>
+            <td><button class="btn btn-ghost" style="padding:4px 10px;font-size:10px">Track</button></td>
+          </tr>
+          <tr>
+            <td class="primary">PR-2024-0028</td>
+            <td>07 Mar 2024</td>
+            <td>Layers Mash 70kg</td>
+            <td>1000</td>
+            <td>25 Mar 2024</td>
+            <td>J. Odhiambo</td>
+            <td><span class="badge badge-gray">Normal</span></td>
+            <td><span class="badge badge-gray">Draft</span></td>
+            <td><button class="btn btn-ghost" style="padding:4px 10px;font-size:10px">Edit</button></td>
+          </tr>
+          <tr>
+            <td class="primary">PR-2024-0027</td>
+            <td>06 Mar 2024</td>
+            <td>Fish Meal 50kg</td>
+            <td>150</td>
+            <td>18 Mar 2024</td>
+            <td>A. Wanjiku</td>
+            <td><span class="badge badge-amber">Medium</span></td>
+            <td><span class="badge badge-green">Received</span></td>
+            <td><button class="btn btn-ghost" style="padding:4px 10px;font-size:10px">View</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ PURCHASES ══════════════════════════════ -->
+  <div class="page" id="page-purchases">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Purchases YTD</div>
+        <div class="kpi-value">KES 2.4M</div>
+        <div class="kpi-sub">Jan – Mar 2024</div>
+      </div>
+      <div class="kpi-card amber">
+        <div class="kpi-label">Outstanding Payables</div>
+        <div class="kpi-value">KES 320K</div>
+        <div class="kpi-sub">4 invoices unpaid</div>
+      </div>
+      <div class="kpi-card teal">
+        <div class="kpi-label">Orders This Month</div>
+        <div class="kpi-value">18</div>
+        <div class="kpi-sub">Purchase orders</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg. Lead Time</div>
+        <div class="kpi-value">4.2d</div>
+        <div class="kpi-sub">Order to receipt</div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <div class="section-title">Purchase Orders</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost">⬇ Export</button>
+        <button class="btn btn-primary" onclick="openModal()">+ Create PO</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>PO Number</th>
+            <th>Date</th>
+            <th>Supplier</th>
+            <th>Items</th>
+            <th>Total Amount</th>
+            <th>Payment Terms</th>
+            <th>Expected Delivery</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="primary">PO-2024-0312</td>
+            <td>10 Mar 2024</td>
+            <td>AgriSources Ltd</td>
+            <td>500 bags Maize Meal</td>
+            <td>KES 150,000</td>
+            <td>Net 30</td>
+            <td>14 Mar 2024</td>
+            <td><span class="badge badge-teal">Approved</span></td>
+          </tr>
+          <tr>
+            <td class="primary">PO-2024-0311</td>
+            <td>09 Mar 2024</td>
+            <td>Kenya Grain Traders</td>
+            <td>200 bags Soya Cake</td>
+            <td>KES 80,000</td>
+            <td>50% upfront</td>
+            <td>13 Mar 2024</td>
+            <td><span class="badge badge-amber">In Transit</span></td>
+          </tr>
+          <tr>
+            <td class="primary">PO-2024-0310</td>
+            <td>08 Mar 2024</td>
+            <td>Mombasa Fishmeal Co.</td>
+            <td>150 bags Fish Meal</td>
+            <td>KES 105,000</td>
+            <td>Net 15</td>
+            <td>12 Mar 2024</td>
+            <td><span class="badge badge-green">Received</span></td>
+          </tr>
+          <tr>
+            <td class="primary">PO-2024-0309</td>
+            <td>07 Mar 2024</td>
+            <td>Rift Valley Millers</td>
+            <td>300 bags Wheat Bran</td>
+            <td>KES 90,000</td>
+            <td>Net 30</td>
+            <td>11 Mar 2024</td>
+            <td><span class="badge badge-green">Received</span></td>
+          </tr>
+          <tr>
+            <td class="primary">PO-2024-0308</td>
+            <td>06 Mar 2024</td>
+            <td>East Africa Vitamins</td>
+            <td>50 bags Premix</td>
+            <td>KES 120,000</td>
+            <td>Advance</td>
+            <td>15 Mar 2024</td>
+            <td><span class="badge badge-amber">Pending</span></td>
+          </tr>
+          <tr>
+            <td class="primary">PO-2024-0307</td>
+            <td>05 Mar 2024</td>
+            <td>AgriSources Ltd</td>
+            <td>400 bags Layers Mash</td>
+            <td>KES 120,000</td>
+            <td>Net 30</td>
+            <td>09 Mar 2024</td>
+            <td><span class="badge badge-red">Overdue</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ SALES ══════════════════════════════════ -->
+  <div class="page" id="page-sales">
+    <div class="kpi-grid">
+      <div class="kpi-card teal">
+        <div class="kpi-label">Sales Revenue MTD</div>
+        <div class="kpi-value">KES 1.8M</div>
+        <div class="kpi-sub">84 orders this month</div>
+        <div class="kpi-change up">↑ 12.1% vs Feb</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Open Orders</div>
+        <div class="kpi-value">11</div>
+        <div class="kpi-sub">Awaiting dispatch</div>
+      </div>
+      <div class="kpi-card amber">
+        <div class="kpi-label">Pending Payments</div>
+        <div class="kpi-value">KES 240K</div>
+        <div class="kpi-sub">6 invoices outstanding</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Returns / Rejections</div>
+        <div class="kpi-value">2</div>
+        <div class="kpi-sub">This month</div>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <div class="section-title">Sales Orders</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost">⬇ Export</button>
+        <button class="btn btn-primary" onclick="openModal()">+ New Order</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active">All Orders</div>
+      <div class="tab">Pending</div>
+      <div class="tab">Processing</div>
+      <div class="tab">Delivered</div>
+      <div class="tab">Cancelled</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Order No.</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Products</th>
+            <th>Qty (Bags)</th>
+            <th>Amount</th>
+            <th>Payment</th>
+            <th>Delivery Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="primary">SO-2024-0589</td>
+            <td>10 Mar 2024</td>
+            <td>Nakuru Farmers Co-op</td>
+            <td>Dairy Meal, Layers Mash</td>
+            <td>200</td>
+            <td>KES 75,000</td>
+            <td><span class="badge badge-green">Paid</span></td>
+            <td>11 Mar 2024</td>
+            <td><span class="badge badge-teal">Dispatched</span></td>
+          </tr>
+          <tr>
+            <td class="primary">SO-2024-0588</td>
+            <td>10 Mar 2024</td>
+            <td>Rift Valley Poultry Farm</td>
+            <td>Layers Mash 70kg</td>
+            <td>150</td>
+            <td>KES 45,000</td>
+            <td><span class="badge badge-amber">Partial</span></td>
+            <td>12 Mar 2024</td>
+            <td><span class="badge badge-amber">Processing</span></td>
+          </tr>
+          <tr>
+            <td class="primary">SO-2024-0587</td>
+            <td>09 Mar 2024</td>
+            <td>Lake Basin Dairy Ltd</td>
+            <td>Dairy Meal 50kg</td>
+            <td>300</td>
+            <td>KES 135,000</td>
+            <td><span class="badge badge-green">Paid</span></td>
+            <td>10 Mar 2024</td>
+            <td><span class="badge badge-green">Delivered</span></td>
+          </tr>
+          <tr>
+            <td class="primary">SO-2024-0586</td>
+            <td>09 Mar 2024</td>
+            <td>Western Kenya Pigs</td>
+            <td>Grower Mash 50kg</td>
+            <td>80</td>
+            <td>KES 24,000</td>
+            <td><span class="badge badge-red">Unpaid</span></td>
+            <td>13 Mar 2024</td>
+            <td><span class="badge badge-amber">Pending</span></td>
+          </tr>
+          <tr>
+            <td class="primary">SO-2024-0585</td>
+            <td>08 Mar 2024</td>
+            <td>Eldoret Agro Suppliers</td>
+            <td>Beef Finisher 50kg</td>
+            <td>120</td>
+            <td>KES 57,600</td>
+            <td><span class="badge badge-green">Paid</span></td>
+            <td>09 Mar 2024</td>
+            <td><span class="badge badge-green">Delivered</span></td>
+          </tr>
+          <tr>
+            <td class="primary">SO-2024-0584</td>
+            <td>08 Mar 2024</td>
+            <td>Nyanza Fish Farmers</td>
+            <td>Fish Meal 50kg</td>
+            <td>50</td>
+            <td>KES 35,000</td>
+            <td><span class="badge badge-green">Paid</span></td>
+            <td>09 Mar 2024</td>
+            <td><span class="badge badge-red">Returned</span></td>
+          </tr>
+          <tr>
+            <td class="primary">SO-2024-0583</td>
+            <td>07 Mar 2024</td>
+            <td>Mount Kenya Hatchery</td>
+            <td>Chick Mash 25kg</td>
+            <td>100</td>
+            <td>KES 20,000</td>
+            <td><span class="badge badge-green">Paid</span></td>
+            <td>08 Mar 2024</td>
+            <td><span class="badge badge-green">Delivered</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ DISTRIBUTION ══════════════════════════════ -->
+  <div class="page" id="page-distribution">
+    <div class="kpi-grid">
+      <div class="kpi-card teal">
+        <div class="kpi-label">Active Deliveries</div>
+        <div class="kpi-value">7</div>
+        <div class="kpi-sub">Trucks on the road</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Today's Dispatches</div>
+        <div class="kpi-value">4</div>
+        <div class="kpi-sub">Scheduled departures</div>
+      </div>
+      <div class="kpi-card amber">
+        <div class="kpi-label">Pending Dispatch</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-sub">Orders waiting for truck</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Delivery Success Rate</div>
+        <div class="kpi-value">97.2%</div>
+        <div class="kpi-sub">Last 90 days</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="section-head">
+          <div class="section-title">Active Delivery Notes</div>
+          <button class="btn btn-primary" onclick="openModal()">+ Schedule Dispatch</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>DN No.</th>
+                <th>Customer</th>
+                <th>Destination</th>
+                <th>Bags</th>
+                <th>Driver</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="primary">DN-0891</td>
+                <td>Nakuru Farmers</td>
+                <td>Nakuru Town</td>
+                <td>200</td>
+                <td>P. Kamau</td>
+                <td><span class="badge badge-teal">En Route</span></td>
+              </tr>
+              <tr>
+                <td class="primary">DN-0890</td>
+                <td>Eldoret Agro</td>
+                <td>Eldoret</td>
+                <td>120</td>
+                <td>J. Rotich</td>
+                <td><span class="badge badge-green">Delivered</span></td>
+              </tr>
+              <tr>
+                <td class="primary">DN-0889</td>
+                <td>Lake Basin Dairy</td>
+                <td>Kisumu</td>
+                <td>300</td>
+                <td>A. Otieno</td>
+                <td><span class="badge badge-teal">En Route</span></td>
+              </tr>
+              <tr>
+                <td class="primary">DN-0888</td>
+                <td>Rift Valley Poultry</td>
+                <td>Kericho</td>
+                <td>150</td>
+                <td>B. Mutai</td>
+                <td><span class="badge badge-amber">Loading</span></td>
+              </tr>
+              <tr>
+                <td class="primary">DN-0887</td>
+                <td>Mount Kenya Hatchery</td>
+                <td>Nyeri</td>
+                <td>100</td>
+                <td>D. Ngugi</td>
+                <td><span class="badge badge-amber">Scheduled</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-head">
+          <div class="section-title">Distribution Routes</div>
+        </div>
+        <div class="route-card">
+          <div class="route-header">
+            <span style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--white)">🚚 Truck KCB 402X — Route: Central Rift</span>
+            <span class="badge badge-teal">En Route</span>
+          </div>
+          <div class="route-stops">
+            <div class="route-stop">
+              <div class="stop-line"><div class="stop-dot"></div><div class="stop-connector"></div></div>
+              <div class="stop-info"><div class="stop-name">📍 Nairobi Central Warehouse</div><div class="stop-detail">Loaded: 200 bags Dairy Meal · Departed 7:30 AM</div></div>
+            </div>
+            <div class="route-stop">
+              <div class="stop-line"><div class="stop-dot"></div><div class="stop-connector"></div></div>
+              <div class="stop-info"><div class="stop-name">📍 Nakuru Farmers Co-op</div><div class="stop-detail">Deliver: 200 bags · ETA 11:00 AM</div></div>
+            </div>
+            <div class="route-stop">
+              <div class="stop-line"><div class="stop-dot gray"></div></div>
+              <div class="stop-info"><div class="stop-name" style="color:var(--text3)">🏁 Return to Nairobi</div><div class="stop-detail">Expected back: 3:00 PM</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="route-card" style="margin-top:16px">
+          <div class="route-header">
+            <span style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--white)">🚚 Truck KDH 819G — Route: Western Kenya</span>
+            <span class="badge badge-teal">En Route</span>
+          </div>
+          <div class="route-stops">
+            <div class="route-stop">
+              <div class="stop-line"><div class="stop-dot"></div><div class="stop-connector"></div></div>
+              <div class="stop-info"><div class="stop-name">📍 Kisumu Distribution Hub</div><div class="stop-detail">Loaded: 300 bags Dairy Meal · Departed 8:00 AM</div></div>
+            </div>
+            <div class="route-stop">
+              <div class="stop-line"><div class="stop-dot gray"></div><div class="stop-connector"></div></div>
+              <div class="stop-info"><div class="stop-name">📍 Lake Basin Dairy Ltd, Kisumu</div><div class="stop-detail">Deliver: 300 bags · ETA 9:30 AM</div></div>
+            </div>
+            <div class="route-stop">
+              <div class="stop-line"><div class="stop-dot gray"></div></div>
+              <div class="stop-info"><div class="stop-name" style="color:var(--text3)">🏁 Return to Hub</div><div class="stop-detail">Expected back: 12:00 PM</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PRODUCTS ══════════════════════════════════ -->
+  <div class="page" id="page-products">
+    <div class="section-head">
+      <div class="section-title">Product Catalogue</div>
+      <button class="btn btn-primary" onclick="openModal()">+ Add Product</button>
+    </div>
+    <div class="product-cards">
+      <div class="product-card">
+        <div class="product-card-icon">🐔</div>
+        <div class="product-card-name">Layers Mash</div>
+        <div class="product-card-sku">SKU: AF-LM-70 · 70kg bag</div>
+        <div class="product-card-stock">
+          <div><div class="stock-num">1,420</div><div class="stock-unit">bags in stock</div></div>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div class="progress-bar" style="margin-top:10px"><div class="progress-fill" style="width:71%"></div></div>
+      </div>
+      <div class="product-card">
+        <div class="product-card-icon">🐄</div>
+        <div class="product-card-name">Dairy Meal</div>
+        <div class="product-card-sku">SKU: AF-DM-50 · 50kg bag</div>
+        <div class="product-card-stock">
+          <div><div class="stock-num">42</div><div class="stock-unit">bags in stock</div></div>
+          <span class="badge badge-red">Low</span>
+        </div>
+        <div class="progress-bar" style="margin-top:10px"><div class="progress-fill red" style="width:14%"></div></div>
+      </div>
+      <div class="product-card">
+        <div class="product-card-icon">🐖</div>
+        <div class="product-card-name">Grower Mash</div>
+        <div class="product-card-sku">SKU: AF-GM-50 · 50kg bag</div>
+        <div class="product-card-stock">
+          <div><div class="stock-num">680</div><div class="stock-unit">bags in stock</div></div>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div class="progress-bar" style="margin-top:10px"><div class="progress-fill" style="width:68%"></div></div>
+      </div>
+      <div class="product-card">
+        <div class="product-card-icon">🌽</div>
+        <div class="product-card-name">Maize Germ</div>
+        <div class="product-card-sku">SKU: AF-MG-90 · 90kg bag</div>
+        <div class="product-card-stock">
+          <div><div class="stock-num">95</div><div class="stock-unit">bags in stock</div></div>
+          <span class="badge badge-amber">Near Reorder</span>
+        </div>
+        <div class="progress-bar" style="margin-top:10px"><div class="progress-fill amber" style="width:24%"></div></div>
+      </div>
+      <div class="product-card">
+        <div class="product-card-icon">🐟</div>
+        <div class="product-card-name">Fish Meal</div>
+        <div class="product-card-sku">SKU: AF-FM-50 · 50kg bag</div>
+        <div class="product-card-stock">
+          <div><div class="stock-num">540</div><div class="stock-unit">bags in stock</div></div>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div class="progress-bar" style="margin-top:10px"><div class="progress-fill" style="width:67%"></div></div>
+      </div>
+      <div class="product-card">
+        <div class="product-card-icon">🐓</div>
+        <div class="product-card-name">Chick Mash</div>
+        <div class="product-card-sku">SKU: AF-CM-25 · 25kg bag</div>
+        <div class="product-card-stock">
+          <div><div class="stock-num">60</div><div class="stock-unit">bags in stock</div></div>
+          <span class="badge badge-red">Low</span>
+        </div>
+        <div class="progress-bar" style="margin-top:10px"><div class="progress-fill red" style="width:25%"></div></div>
+      </div>
+      <div class="product-card">
+        <div class="product-card-icon">🐂</div>
+        <div class="product-card-name">Beef Finisher</div>
+        <div class="product-card-sku">SKU: AF-BF-50 · 50kg bag</div>
+        <div class="product-card-stock">
+          <div><div class="stock-num">820</div><div class="stock-unit">bags in stock</div></div>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div class="progress-bar" style="margin-top:10px"><div class="progress-fill" style="width:82%"></div></div>
+      </div>
+      <div class="product-card">
+        <div class="product-card-icon">🌿</div>
+        <div class="product-card-name">Rabbit Pellets</div>
+        <div class="product-card-sku">SKU: AF-RP-20 · 20kg bag</div>
+        <div class="product-card-stock">
+          <div><div class="stock-num">230</div><div class="stock-unit">bags in stock</div></div>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div class="progress-bar" style="margin-top:10px"><div class="progress-fill" style="width:46%"></div></div>
+      </div>
+      <div class="product-card">
+        <div class="product-card-icon">🦆</div>
+        <div class="product-card-name">Duck Pellets</div>
+        <div class="product-card-sku">SKU: AF-DP-25 · 25kg bag</div>
+        <div class="product-card-stock">
+          <div><div class="stock-num">190</div><div class="stock-unit">bags in stock</div></div>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div class="progress-bar" style="margin-top:10px"><div class="progress-fill" style="width:38%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SUPPLIERS ══════════════════════════════════ -->
+  <div class="page" id="page-suppliers">
+    <div class="section-head">
+      <div class="section-title">Supplier Directory</div>
+      <button class="btn btn-primary" onclick="openModal()">+ Add Supplier</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Supplier Name</th>
+            <th>Category</th>
+            <th>Contact</th>
+            <th>Location</th>
+            <th>Payment Terms</th>
+            <th>Total Purchased</th>
+            <th>Last Order</th>
+            <th>Rating</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="primary">AgriSources Ltd</td>
+            <td>Grains & Cereals</td>
+            <td>+254 722 001 002</td>
+            <td>Nairobi</td>
+            <td>Net 30</td>
+            <td>KES 820,000</td>
+            <td>10 Mar 2024</td>
+            <td>⭐⭐⭐⭐⭐</td>
+            <td><span class="badge badge-green">Active</span></td>
+          </tr>
+          <tr>
+            <td class="primary">Kenya Grain Traders</td>
+            <td>Soya & Protein</td>
+            <td>+254 733 202 303</td>
+            <td>Nakuru</td>
+            <td>50% Advance</td>
+            <td>KES 340,000</td>
+            <td>09 Mar 2024</td>
+            <td>⭐⭐⭐⭐</td>
+            <td><span class="badge badge-green">Active</span></td>
+          </tr>
+          <tr>
+            <td class="primary">Mombasa Fishmeal Co.</td>
+            <td>Protein Supplements</td>
+            <td>+254 741 505 606</td>
+            <td>Mombasa</td>
+            <td>Net 15</td>
+            <td>KES 490,000</td>
+            <td>08 Mar 2024</td>
+            <td>⭐⭐⭐⭐⭐</td>
+            <td><span class="badge badge-green">Active</span></td>
+          </tr>
+          <tr>
+            <td class="primary">Rift Valley Millers</td>
+            <td>Wheat & Bran</td>
+            <td>+254 712 707 808</td>
+            <td>Eldoret</td>
+            <td>Net 30</td>
+            <td>KES 215,000</td>
+            <td>07 Mar 2024</td>
+            <td>⭐⭐⭐</td>
+            <td><span class="badge badge-green">Active</span></td>
+          </tr>
+          <tr>
+            <td class="primary">East Africa Vitamins</td>
+            <td>Vitamins & Premix</td>
+            <td>+254 700 909 010</td>
+            <td>Nairobi</td>
+            <td>Advance</td>
+            <td>KES 380,000</td>
+            <td>06 Mar 2024</td>
+            <td>⭐⭐⭐⭐</td>
+            <td><span class="badge badge-amber">On Review</span></td>
+          </tr>
+          <tr>
+            <td class="primary">Lake Basin Minerals</td>
+            <td>Minerals & Salts</td>
+            <td>+254 728 111 222</td>
+            <td>Kisumu</td>
+            <td>Net 45</td>
+            <td>KES 125,000</td>
+            <td>01 Mar 2024</td>
+            <td>⭐⭐⭐⭐</td>
+            <td><span class="badge badge-green">Active</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ CUSTOMERS ══════════════════════════════════ -->
+  <div class="page" id="page-customers">
+    <div class="section-head">
+      <div class="section-title">Customer Accounts</div>
+      <button class="btn btn-primary" onclick="openModal()">+ Add Customer</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Customer Name</th>
+            <th>Type</th>
+            <th>Region</th>
+            <th>Contact</th>
+            <th>Credit Limit</th>
+            <th>Outstanding</th>
+            <th>Total Purchases</th>
+            <th>Last Order</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="primary">Nakuru Farmers Co-op</td>
+            <td>Co-operative</td>
+            <td>Rift Valley</td>
+            <td>+254 722 100 200</td>
+            <td>KES 200,000</td>
+            <td>KES 0</td>
+            <td>KES 1.2M</td>
+            <td>10 Mar 2024</td>
+            <td><span class="badge badge-green">Active</span></td>
+          </tr>
+          <tr>
+            <td class="primary">Lake Basin Dairy Ltd</td>
+            <td>Corporate</td>
+            <td>Western</td>
+            <td>+254 733 300 400</td>
+            <td>KES 500,000</td>
+            <td>KES 0</td>
+            <td>KES 2.1M</td>
+            <td>10 Mar 2024</td>
+            <td><span class="badge badge-green">Active</span></td>
+          </tr>
+          <tr>
+            <td class="primary">Rift Valley Poultry Farm</td>
+            <td>Farm</td>
+            <td>Rift Valley</td>
+            <td>+254 741 500 600</td>
+            <td>KES 100,000</td>
+            <td>KES 22,500</td>
+            <td>KES 340,000</td>
+            <td>10 Mar 2024</td>
+            <td><span class="badge badge-green">Active</span></td>
+          </tr>
+          <tr>
+            <td class="primary">Western Kenya Pigs</td>
+            <td>Farm</td>
+            <td>Western</td>
+            <td>+254 712 700 800</td>
+            <td>KES 50,000</td>
+            <td>KES 24,000</td>
+            <td>KES 98,000</td>
+            <td>09 Mar 2024</td>
+            <td><span class="badge badge-amber">Overdue</span></td>
+          </tr>
+          <tr>
+            <td class="primary">Eldoret Agro Suppliers</td>
+            <td>Distributor</td>
+            <td>North Rift</td>
+            <td>+254 700 900 010</td>
+            <td>KES 300,000</td>
+            <td>KES 0</td>
+            <td>KES 870,000</td>
+            <td>08 Mar 2024</td>
+            <td><span class="badge badge-green">Active</span></td>
+          </tr>
+          <tr>
+            <td class="primary">Nyanza Fish Farmers</td>
+            <td>Farm</td>
+            <td>Western</td>
+            <td>+254 728 110 220</td>
+            <td>KES 80,000</td>
+            <td>KES 0</td>
+            <td>KES 245,000</td>
+            <td>08 Mar 2024</td>
+            <td><span class="badge badge-red">Dispute</span></td>
+          </tr>
+          <tr>
+            <td class="primary">Mount Kenya Hatchery</td>
+            <td>Hatchery</td>
+            <td>Central</td>
+            <td>+254 711 330 440</td>
+            <td>KES 150,000</td>
+            <td>KES 0</td>
+            <td>KES 560,000</td>
+            <td>07 Mar 2024</td>
+            <td><span class="badge badge-green">Active</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ══ MODAL ══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal" onclick="closeModalOnOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">New Record</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-grid" id="modal-body">
+      <div class="form-group">
+        <label class="form-label">Item / Product</label>
+        <select class="form-select">
+          <option>Layers Mash 70kg</option>
+          <option>Dairy Meal 50kg</option>
+          <option>Grower Mash 50kg</option>
+          <option>Maize Germ 90kg</option>
+          <option>Fish Meal 50kg</option>
+          <option>Chick Mash 25kg</option>
+          <option>Beef Finisher 50kg</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Quantity (Bags)</label>
+        <input class="form-input" type="number" placeholder="e.g. 200" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Warehouse</label>
+        <select class="form-select">
+          <option>Nairobi Central Warehouse</option>
+          <option>Kisumu Distribution Hub</option>
+          <option>Nakuru Depot</option>
+          <option>Eldoret Branch</option>
+          <option>Mombasa Port Store</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input class="form-input" type="date" value="2024-03-10" />
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Notes / Remarks</label>
+        <input class="form-input" type="text" placeholder="Optional notes..." />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal()">Save Record</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const pageLabels = {
+    dashboard:    'Dashboard',
+    inventory:    'Inventory Management',
+    stocks:       'Stock Ledger',
+    procurement:  'Procurement',
+    purchases:    'Purchases',
+    sales:        'Sales Orders',
+    distribution: 'Distribution',
+    products:     'Products',
+    suppliers:    'Suppliers',
+    customers:    'Customers',
+  };
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+    document.getElementById('page-' + id).classList.add('active');
+    document.getElementById('page-title').textContent = pageLabels[id] || id;
+
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) {
+        n.classList.add('active');
+      }
+    });
+  }
+
+  function openModal() {
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+  }
+
+  function closeModalOnOverlay(e) {
+    if (e.target === document.getElementById('modal')) closeModal();
+  }
+
+  // Tab clicks
+  document.querySelectorAll('.tabs').forEach(tabGroup => {
+    tabGroup.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabGroup.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+  });
+</script>
+</body>
+</html>
