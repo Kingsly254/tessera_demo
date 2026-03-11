@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { DashboardLayoutShell } from "@/components/dashboard-layout-shell";
 
 type DashboardLayoutProps = {
@@ -6,9 +7,11 @@ type DashboardLayoutProps = {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <div className="shell">
-      <section className="section" style={{ paddingTop: "32px" }}>
-        <DashboardLayoutShell>{children}</DashboardLayoutShell>
+    <div className="shell dashboard-shell-view">
+      <section className="section dashboard-stage">
+        <Suspense fallback={<div className="erp-shell" />}>
+          <DashboardLayoutShell>{children}</DashboardLayoutShell>
+        </Suspense>
       </section>
     </div>
   );

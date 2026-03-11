@@ -36,15 +36,15 @@ export const roleCards = [
     slug: "stock-manager",
     title: "Stock Manager",
     icon: "INV",
-    summary: "Track warehouse balances, reorder points, write-offs, and stock transfers.",
-    focus: "Inventory, bin cards, stock ledger, supplier receipts",
+    summary: "Control inventory, procurement, purchases, and manufacturing readiness across all stores.",
+    focus: "Inventory, stock ledger, procurement, purchases, manufacturing",
   },
   {
     slug: "sales-agent",
     title: "Sales Agent",
     icon: "SAL",
-    summary: "Create quotations, manage sales orders, reserve stock, and follow deliveries.",
-    focus: "Leads, quotations, orders, route dispatch, payment follow-up",
+    summary: "Manage orders, customer accounts, route dispatch, and POS sales for walk-in clients.",
+    focus: "Sales orders, customer accounts, distribution, POS, payment follow-up",
   },
   {
     slug: "client",
@@ -57,8 +57,8 @@ export const roleCards = [
     slug: "owner",
     title: "Owner",
     icon: "OWN",
-    summary: "See company-wide performance, approvals, margins, and operational exceptions.",
-    focus: "Dashboards, approvals, profitability, alerts, executive controls",
+    summary: "See company-wide manufacturing, commercial, finance, HR, and operations performance.",
+    focus: "Dashboards, approvals, profitability, HR, accounting, executive controls",
   },
 ] as const;
 
@@ -91,20 +91,20 @@ export const roleActionLabels: Record<DemoRole, { overview: string; home: string
 
 export const featureCards = [
   {
-    title: "Inventory Control",
+    title: "Stock Management",
     copy: "Multi-warehouse balances, low-stock alerts, stock valuation, and traceable movements.",
   },
   {
-    title: "Sales Flow",
-    copy: "Quotation to cash walkthroughs, order approvals, dispatch visibility, and customer statements.",
+    title: "Sales and Distribution",
+    copy: "Order capture, dispatch visibility, customer service, and walk-in POS control in one flow.",
   },
   {
-    title: "Procurement",
-    copy: "Requisitions, RFQs, purchase approvals, supplier scorecards, and inbound receiving.",
+    title: "Manufacturing",
+    copy: "Production planning, raw material consumption, batch release, and output traceability.",
   },
   {
-    title: "Owner Insights",
-    copy: "Operational health metrics, exception reporting, role-based approvals, and margin snapshots.",
+    title: "Accounting and HR",
+    copy: "Receivables, payables, payroll readiness, attendance, and management exceptions.",
   },
 ] as const;
 
@@ -113,18 +113,30 @@ export const dashboardPages: DashboardPage[] = [
     id: "dashboard",
     label: "Dashboard",
     navSection: "Overview",
-    intro: "Executive overview of inventory health, sales velocity, approvals, and operational workload.",
+    intro: "Executive overview of manufacturing output, stock exposure, sales movement, and business control points.",
     kpis: [
-      { label: "Total Stock Value", value: "KES 4.2M", subtext: "Across 6 warehouses", change: "Up 8.4% vs last month" },
-      { label: "Pending Purchases", value: "12", subtext: "Orders awaiting approval", change: "3 new this week", accent: "amber" },
+      { label: "Daily Output", value: "96 MT", subtext: "Finished feed released today", change: "Up 6.2% vs last week" },
+      { label: "Stock Value", value: "KES 4.2M", subtext: "Across 6 warehouses", change: "3 replenishment risks open", accent: "amber" },
       { label: "Sales This Month", value: "KES 1.8M", subtext: "84 orders fulfilled", change: "Up 12.1% vs last month", accent: "teal" },
-      { label: "Low Stock Alerts", value: "3", subtext: "Items below reorder level", change: "Needs immediate action", accent: "red" },
+      { label: "Critical Exceptions", value: "4", subtext: "Require management action", change: "2 in stock, 1 finance, 1 HR", accent: "red" },
+    ],
+  },
+  {
+    id: "manufacturing",
+    label: "Manufacturing",
+    navSection: "Manufacturing",
+    intro: "Production planning, batch execution, raw material consumption, and output traceability.",
+    kpis: [
+      { label: "Open Work Orders", value: "18", subtext: "Queued for production" },
+      { label: "Plant Utilization", value: "82%", subtext: "Current week", accent: "teal" },
+      { label: "Batch Rejections", value: "1", subtext: "Quality hold", accent: "red" },
+      { label: "Output Today", value: "96 MT", subtext: "Finished feed volume", accent: "amber" },
     ],
   },
   {
     id: "inventory",
-    label: "Inventory Management",
-    navSection: "Operations",
+    label: "Inventory",
+    navSection: "Stock Management",
     badge: { text: "3", accent: "amber" },
     intro: "Item master visibility, warehouse balances, reorder thresholds, and valuation snapshots.",
     kpis: [
@@ -137,7 +149,7 @@ export const dashboardPages: DashboardPage[] = [
   {
     id: "stocks",
     label: "Stock Ledger",
-    navSection: "Operations",
+    navSection: "Stock Management",
     intro: "Every stock-in and stock-out transaction across the warehouse network.",
     kpis: [
       { label: "Total Stock Units", value: "8,387", subtext: "Bags across all stores" },
@@ -149,7 +161,7 @@ export const dashboardPages: DashboardPage[] = [
   {
     id: "procurement",
     label: "Procurement",
-    navSection: "Operations",
+    navSection: "Stock Management",
     badge: { text: "5" },
     intro: "Demand capture through RFQ, supplier selection, and purchase approval workflow.",
     kpis: [
@@ -162,7 +174,7 @@ export const dashboardPages: DashboardPage[] = [
   {
     id: "purchases",
     label: "Purchases",
-    navSection: "Operations",
+    navSection: "Stock Management",
     intro: "Receiving, quality checks, supplier invoices, and procurement performance tracking.",
     kpis: [
       { label: "Receipts This Week", value: "17", subtext: "Completed GRNs" },
@@ -172,9 +184,33 @@ export const dashboardPages: DashboardPage[] = [
     ],
   },
   {
+    id: "products",
+    label: "Item Master",
+    navSection: "Stock Management",
+    intro: "Item master definitions, packaging units, prices, and feed formulation references.",
+    kpis: [
+      { label: "Product Lines", value: "8", subtext: "Feed categories" },
+      { label: "Active SKUs", value: "248", subtext: "Saleable items" },
+      { label: "Price Lists", value: "4", subtext: "By region and segment", accent: "amber" },
+      { label: "Recent Updates", value: "11", subtext: "Last 7 days", accent: "teal" },
+    ],
+  },
+  {
+    id: "suppliers",
+    label: "Suppliers",
+    navSection: "Stock Management",
+    intro: "Supplier profiles, approval status, negotiated terms, and performance scoring.",
+    kpis: [
+      { label: "Approved Suppliers", value: "14", subtext: "Ready for sourcing" },
+      { label: "Contracts Expiring", value: "2", subtext: "Within 30 days", accent: "amber" },
+      { label: "Blocked Vendors", value: "1", subtext: "Quality issue", accent: "red" },
+      { label: "Avg Supplier Score", value: "89%", subtext: "Quality and lead time", accent: "teal" },
+    ],
+  },
+  {
     id: "sales",
     label: "Sales Orders",
-    navSection: "Commerce",
+    navSection: "Sales and Distribution",
     badge: { text: "2", accent: "red" },
     intro: "Quotation, order booking, stock reservation, invoicing, and customer delivery tracking.",
     kpis: [
@@ -187,7 +223,7 @@ export const dashboardPages: DashboardPage[] = [
   {
     id: "distribution",
     label: "Distribution",
-    navSection: "Commerce",
+    navSection: "Sales and Distribution",
     intro: "Route planning, truck allocation, proof of delivery, and last-mile exception tracking.",
     kpis: [
       { label: "Scheduled Dispatches", value: "14", subtext: "Next 48 hours" },
@@ -197,33 +233,21 @@ export const dashboardPages: DashboardPage[] = [
     ],
   },
   {
-    id: "drivers",
-    label: "Drivers",
-    navSection: "Commerce",
-    intro: "Driver assignment, route readiness, proof of delivery status, and transport performance.",
+    id: "customers",
+    label: "Customers",
+    navSection: "Sales and Distribution",
+    intro: "Customer accounts, credit controls, account statements, and service history.",
     kpis: [
-      { label: "Active Drivers", value: "12", subtext: "Assigned to current fleet" },
-      { label: "Routes Today", value: "9", subtext: "Planned dispatch runs", accent: "teal" },
-      { label: "Delivery Exceptions", value: "1", subtext: "Needs reassignment", accent: "red" },
-      { label: "Avg Route Completion", value: "94%", subtext: "Monthly performance", accent: "amber" },
-    ],
-  },
-  {
-    id: "manufacturing",
-    label: "Manufacturing",
-    navSection: "Operations",
-    intro: "Production planning, batch execution, raw material consumption, and output traceability.",
-    kpis: [
-      { label: "Open Work Orders", value: "18", subtext: "Queued for production" },
-      { label: "Plant Utilization", value: "82%", subtext: "Current week", accent: "teal" },
-      { label: "Batch Rejections", value: "1", subtext: "Quality hold", accent: "red" },
-      { label: "Output Today", value: "96 MT", subtext: "Finished feed volume", accent: "amber" },
+      { label: "Active Customers", value: "128", subtext: "Trading this quarter" },
+      { label: "Overdue Accounts", value: "7", subtext: "Require follow-up", accent: "red" },
+      { label: "New Accounts", value: "12", subtext: "Last 30 days", accent: "teal" },
+      { label: "Avg Collection", value: "22 days", subtext: "Receivables cycle", accent: "amber" },
     ],
   },
   {
     id: "hr",
-    label: "HR",
-    navSection: "People",
+    label: "HRMS",
+    navSection: "HRMS and TA",
     intro: "Staff records, leave approvals, payroll readiness, and departmental staffing visibility.",
     kpis: [
       { label: "Employees", value: "86", subtext: "Across plant, sales, and logistics" },
@@ -235,7 +259,7 @@ export const dashboardPages: DashboardPage[] = [
   {
     id: "attendance",
     label: "Time Attendance",
-    navSection: "People",
+    navSection: "HRMS and TA",
     intro: "Shift attendance, overtime, lateness monitoring, and payroll input capture.",
     kpis: [
       { label: "Clock-ins Today", value: "79", subtext: "Recorded before 8:00 AM" },
@@ -245,46 +269,46 @@ export const dashboardPages: DashboardPage[] = [
     ],
   },
   {
-    id: "products",
-    label: "Products",
-    navSection: "Master Data",
-    intro: "Item master definitions, packaging units, prices, and feed formulation references.",
+    id: "cms",
+    label: "CMS",
+    navSection: "CMS",
+    intro: "Manage website banners, dealer notices, campaign content, and product communication assets.",
     kpis: [
-      { label: "Product Lines", value: "8", subtext: "Feed categories" },
-      { label: "Active SKUs", value: "248", subtext: "Saleable items" },
-      { label: "Price Lists", value: "4", subtext: "By region and segment", accent: "amber" },
-      { label: "Recent Updates", value: "11", subtext: "Last 7 days", accent: "teal" },
+      { label: "Live Banners", value: "6", subtext: "Homepage and campaign placements" },
+      { label: "Dealer Notices", value: "4", subtext: "Pending publication", accent: "amber" },
+      { label: "Product Sheets", value: "18", subtext: "Current downloadable assets", accent: "teal" },
+      { label: "Expired Content", value: "1", subtext: "Needs archive or refresh", accent: "red" },
     ],
   },
   {
-    id: "suppliers",
-    label: "Suppliers",
-    navSection: "Master Data",
-    intro: "Supplier profiles, approval status, negotiated terms, and performance scoring.",
+    id: "accounting",
+    label: "Accounting",
+    navSection: "Accounting",
+    intro: "Receivables, payables, cash status, postings, and finance exceptions across the business.",
     kpis: [
-      { label: "Approved Suppliers", value: "14", subtext: "Ready for sourcing" },
-      { label: "Contracts Expiring", value: "2", subtext: "Within 30 days", accent: "amber" },
-      { label: "Blocked Vendors", value: "1", subtext: "Quality issue", accent: "red" },
-      { label: "Avg Supplier Score", value: "89%", subtext: "Quality and lead time", accent: "teal" },
+      { label: "Receivables", value: "KES 612K", subtext: "Open customer balances" },
+      { label: "Payables", value: "KES 320K", subtext: "Supplier obligations", accent: "amber" },
+      { label: "Cash Position", value: "KES 2.6M", subtext: "Bank and cash balances", accent: "teal" },
+      { label: "Posting Exceptions", value: "2", subtext: "Awaiting finance review", accent: "red" },
     ],
   },
   {
-    id: "customers",
-    label: "Customers",
-    navSection: "Master Data",
-    intro: "Customer accounts, credit controls, account statements, and service history.",
+    id: "pos",
+    label: "POS",
+    navSection: "POS",
+    intro: "Monitor till activity, walk-in client sales, payment methods, and store-level point-of-sale performance.",
     kpis: [
-      { label: "Active Customers", value: "128", subtext: "Trading this quarter" },
-      { label: "Overdue Accounts", value: "7", subtext: "Require follow-up", accent: "red" },
-      { label: "New Accounts", value: "12", subtext: "Last 30 days", accent: "teal" },
-      { label: "Avg Collection", value: "22 days", subtext: "Receivables cycle", accent: "amber" },
+      { label: "Walk-In Sales Today", value: "KES 184K", subtext: "Counter sales across retail points" },
+      { label: "Receipts Posted", value: "46", subtext: "Completed POS transactions", accent: "teal" },
+      { label: "Returns", value: "1", subtext: "Customer return pending review", accent: "red" },
+      { label: "Avg Basket", value: "KES 4,000", subtext: "Current day sales mix", accent: "amber" },
     ],
   },
 ];
 
 export const roleVisibleModules: Record<DemoRole, string[]> = {
-  "stock-manager": ["dashboard", "inventory", "stocks", "procurement", "purchases", "manufacturing", "products", "suppliers"],
-  "sales-agent": ["dashboard", "sales", "distribution", "drivers", "customers", "products"],
+  "stock-manager": ["dashboard", "manufacturing", "inventory", "stocks", "procurement", "purchases", "products", "suppliers"],
+  "sales-agent": ["dashboard", "sales", "distribution", "customers", "pos"],
   owner: dashboardPages.map((page) => page.id),
 };
 
@@ -343,6 +367,21 @@ export const moduleHighlights: Record<string, ModuleHighlight[]> = {
     { title: "Clock-in tracking", detail: "Monitor who reported on time across plant and field teams." },
     { title: "Overtime control", detail: "Surface extra hours before payroll closes." },
     { title: "Absence alerts", detail: "Highlight staffing gaps that affect production or delivery." },
+  ],
+  cms: [
+    { title: "Website control", detail: "Manage banners, dealer notices, and promotional visibility." },
+    { title: "Campaign readiness", detail: "Coordinate launches, expiry dates, and publishing status." },
+    { title: "Brand consistency", detail: "Keep customer-facing content aligned across channels." },
+  ],
+  accounting: [
+    { title: "Receivables watch", detail: "Track customer balances, collection timing, and credit risk." },
+    { title: "Payables control", detail: "Monitor supplier obligations, due dates, and posting readiness." },
+    { title: "Cash visibility", detail: "Bring bank, till, and finance exceptions into one view." },
+  ],
+  pos: [
+    { title: "Walk-in sales", detail: "Monitor retail tills, cash collections, and POS productivity." },
+    { title: "Till discipline", detail: "Track payment mix, receipt volume, and cashier exceptions." },
+    { title: "Retail visibility", detail: "Use a dedicated POS screen for counter-service sales." },
   ],
   products: [
     { title: "Product master", detail: "Maintain formulations, units, and commercial pack sizes." },
@@ -493,6 +532,36 @@ export const moduleTables: Record<string, ModuleTable> = {
       ["Green Valley Layers", "Farm", "Kiambu", "KES 150,000", "KES 21,000", "10 Mar 2026", "Active"],
       ["Sunrise Dairy Co-op", "Co-op", "Nakuru", "KES 350,000", "KES 82,000", "09 Mar 2026", "Credit Hold"],
       ["Rift Poultry Hub", "Distributor", "Uasin Gishu", "KES 500,000", "KES 0", "08 Mar 2026", "Active"],
+    ],
+  },
+  cms: {
+    title: "Content and Campaign Queue",
+    caption: "Dealer notices, website content, and product communication assets.",
+    headers: ["Content", "Channel", "Audience", "Owner", "Go Live", "Expiry", "Status"],
+    rows: [
+      ["March pricing banner", "Website", "Retail + Dealer", "Marketing", "12 Mar 2026", "31 Mar 2026", "Scheduled"],
+      ["Layers mash flyer", "Dealer Portal", "Distributors", "Commercial", "10 Mar 2026", "30 Apr 2026", "Live"],
+      ["Plant maintenance notice", "Website", "All visitors", "Operations", "09 Mar 2026", "15 Mar 2026", "Review"],
+    ],
+  },
+  accounting: {
+    title: "Finance Control Board",
+    caption: "Receivables, supplier obligations, and posting activity.",
+    headers: ["Reference", "Type", "Party", "Due Date", "Amount", "Owner", "Status"],
+    rows: [
+      ["AR-1182", "Receivable", "Sunrise Dairy Co-op", "15 Mar 2026", "KES 82,000", "Collections", "Follow Up"],
+      ["AP-904", "Payable", "Nairobi Grains", "18 Mar 2026", "KES 120,000", "Accounts", "Pending"],
+      ["JV-441", "Journal", "Month-end accrual", "11 Mar 2026", "KES 64,000", "Finance", "Posted"],
+    ],
+  },
+  pos: {
+    title: "Walk-In POS Activity",
+    caption: "Retail sales posted through tills for direct counter-service customers.",
+    headers: ["Receipt", "Till", "Walk-In Client", "Items", "Amount", "Payment", "Status"],
+    rows: [
+      ["POS-22014", "Retail Counter 1", "Walk-In Client", "Layers Mash x 6", "KES 1,800", "Cash", "Completed"],
+      ["POS-22013", "Retail Counter 2", "Walk-In Client", "Dairy Meal x 3", "KES 1,350", "M-Pesa", "Completed"],
+      ["POS-22012", "Dealer Counter", "Kasarani Agrovet", "Chick Mash x 10", "KES 2,000", "Card", "Pending"],
     ],
   },
 };

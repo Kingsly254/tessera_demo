@@ -1,7 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import {
+  Bell,
+  ChevronRight,
+  CircleUserRound,
+  House,
+  ListCollapse,
+  PanelLeftClose,
+  PanelLeftOpen,
+  PackagePlus,
+  ReceiptText,
+  Search,
+  Sprout,
+  Truck,
+} from "lucide-react";
 import {
   clientOrderCatalog,
   clientAccountRows,
@@ -18,7 +32,24 @@ function getPortalHref(id: string) {
   return id === "overview" ? "/portal" : `/portal/${id}`;
 }
 
+const portalIconMap = {
+  overview: House,
+  "new-order": PackagePlus,
+  orders: ReceiptText,
+  deliveries: Truck,
+  account: CircleUserRound,
+} as const;
+
+const portalNotifications = [
+  { title: "Dispatch DSP-4401 is scheduled for tomorrow morning", meta: "Delivery | 20 min ago", accent: "teal" },
+  { title: "Your latest order is awaiting commercial confirmation", meta: "Orders | 47 min ago", accent: "amber" },
+  { title: "Updated customer statement is now available", meta: "Account | 2 hrs ago", accent: "" },
+] as const;
+
 export function ClientPortal({ pageId }: ClientPortalProps) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const page = clientPortalPages.find((entry) => entry.id === pageId) ?? clientPortalPages[0];
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,6 +70,28 @@ export function ClientPortal({ pageId }: ClientPortalProps) {
   const subtotal = selectedItems.reduce((sum, item) => sum + item.price * quantities[item.id], 0);
   const vat = Math.round(subtotal * 0.16);
   const total = subtotal + vat;
+
+  useEffect(() => {
+    const savedState = window.localStorage.getItem("agrifeed-portal-collapsed");
+    if (savedState === "true") {
+      setIsCollapsed(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem("agrifeed-portal-collapsed", String(isCollapsed));
+  }, [isCollapsed]);
+
+  useEffect(() => {
+    const savedDensity = window.localStorage.getItem("agrifeed-portal-compact");
+    if (savedDensity === "true") {
+      setIsCompact(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem("agrifeed-portal-compact", String(isCompact));
+  }, [isCompact]);
 
   function changeQty(id: string, delta: number) {
     setQuantities((current) => ({
@@ -103,22 +156,42 @@ export function ClientPortal({ pageId }: ClientPortalProps) {
   }
 
   return (
-    <div className="erp-shell">
+    <div
+      className={`erp-shell shell-has-collapsible-sidebar ${isCollapsed ? "sidebar-collapsed" : ""} ${
+        isCompact ? "table-density-compact" : ""
+      }`.trim()}
+    >
       <aside className="sidebar">
         <div className="sidebar-logo">
           <div className="logo-badge">
-            <div className="logo-icon">CL</div>
+            <div className="logo-icon">
+              <Sprout size={18} strokeWidth={2} />
+            </div>
             <div>
-              <div className="logo-text">AgriFeed Client</div>
-              <div className="logo-sub">Customer Portal</div>
+              <div className="logo-text">AgriFeed</div>
+              <div className="logo-sub">Client Workspace</div>
             </div>
           </div>
+          <button
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="sidebar-toggle desktop-toggle"
+            onClick={() => setIsCollapsed((current) => !current)}
+            type="button"
+          >
+            {isCollapsed ? <PanelLeftOpen size={16} strokeWidth={1.9} /> : <PanelLeftClose size={16} strokeWidth={1.9} />}
+          </button>
         </div>
 
         <div className="sidebar-section">
-          <div className="sidebar-label">Portal</div>
+          <div className="sidebar-label">Customer Workspace</div>
           {clientPortalPages.map((item) => (
             <Link className={`nav-item ${page.id === item.id ? "active" : ""}`} href={getPortalHref(item.id)} key={item.id}>
+              <span className="nav-icon">
+                {(() => {
+                  const Icon = portalIconMap[item.id as keyof typeof portalIconMap] ?? House;
+                  return <Icon size={16} strokeWidth={1.9} />;
+                })()}
+              </span>
               <span>{item.label}</span>
             </Link>
           ))}
@@ -127,45 +200,111 @@ export function ClientPortal({ pageId }: ClientPortalProps) {
         <div className="sidebar-bottom">
           <div className="user-card">
             <div className="user-avatar">MK</div>
-            <div>
-              <div className="logo-text" style={{ fontSize: "0.95rem" }}>
-                Mary Kamau
-              </div>
+            <div className="user-info">
+              <div className="user-name">Mary Kamau</div>
               <div className="user-role">Sunrise Poultry Farm</div>
             </div>
+          </div>
+          <div className="sidebar-footer-actions">
+            <Link className="sidebar-footer-link" href="/">
+              Company Site
+            </Link>
+            <Link className="sidebar-footer-link" href="/">
+              Logout
+            </Link>
           </div>
         </div>
       </aside>
 
       <main className="dashboard-main">
         <div className="topbar">
-          <div>
-            <div className="page-title">{page.label}</div>
-            <div className="small">{page.intro}</div>
-            <div className="small" style={{ marginTop: "4px" }}>
-              Client portal priority: orders, deliveries, account visibility, and self-service history.
+          <div className="topbar-leading">
+            <button
+              aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              className="sidebar-toggle"
+              onClick={() => setIsCollapsed((current) => !current)}
+              type="button"
+            >
+              {isCollapsed ? <PanelLeftOpen size={16} strokeWidth={1.9} /> : <PanelLeftClose size={16} strokeWidth={1.9} />}
+            </button>
+            <div className="topbar-brand-chip">
+              <div className="topbar-brand-icon">
+                <Sprout size={14} strokeWidth={2} />
+              </div>
+              <span>Client Workspace</span>
+            </div>
+            <div className="page-heading">
+              <div className="breadcrumb-trail">
+                <span>AgriFeed</span>
+                <ChevronRight size={12} strokeWidth={1.8} />
+                <span>Client Workspace</span>
+                <ChevronRight size={12} strokeWidth={1.8} />
+                <span>{page.label}</span>
+              </div>
+              <div className="page-title">{page.label}</div>
+              <div className="page-subtitle">{page.intro}</div>
+              <div className="page-subtitle">
+                Client portal priority: orders, deliveries, account visibility, and self-service history.
+              </div>
             </div>
           </div>
           <div className="topbar-actions">
-            <div className="search-box">Search orders...</div>
-            <Link className="btn btn-secondary" href="/portal">
-              Portal home
-            </Link>
+            <button className="dashboard-utility-btn" onClick={() => setIsCompact((current) => !current)} type="button">
+              <ListCollapse size={15} strokeWidth={1.9} />
+              <span>{isCompact ? "Comfortable" : "Compact"}</span>
+            </button>
+            <button className="dashboard-utility-btn notification-trigger" onClick={() => setIsNotificationsOpen((current) => !current)} type="button">
+              <Bell size={15} strokeWidth={1.9} />
+              <span>Alerts</span>
+              <span className="notification-count">{portalNotifications.length}</span>
+            </button>
             <Link className="btn btn-primary" href="/">
+              Logout
+            </Link>
+            <Link className="btn btn-secondary" href="/">
               Company site
             </Link>
+            <div className="search-box">
+              <Search size={14} strokeWidth={1.9} />
+              <span>Search orders...</span>
+            </div>
           </div>
         </div>
+        {isNotificationsOpen ? (
+          <div className="notifications-panel">
+            <div className="notifications-head">
+              <div className="section-title">Notifications</div>
+              <button className="sidebar-toggle" onClick={() => setIsNotificationsOpen(false)} type="button">
+                <PanelLeftClose size={14} strokeWidth={1.9} />
+              </button>
+            </div>
+            <div className="summary-list">
+              {portalNotifications.map((item) => (
+                <div className="notification-item" key={item.title}>
+                  <div className={`activity-dot ${item.accent}`.trim()} />
+                  <div>
+                    <div className="summary-title">{item.title}</div>
+                    <div className="summary-meta">{item.meta}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         <section className="page-panel">
           <div className="kpi-grid">
-            {page.kpis.map((kpi) => (
-              <article className={`kpi-card ${kpi.accent ?? ""}`.trim()} key={kpi.label}>
+            {page.kpis.map((kpi) => {
+              const accent = "accent" in kpi ? kpi.accent : undefined;
+
+              return (
+                <article className={`kpi-card ${accent ?? ""}`.trim()} key={kpi.label}>
                 <div className="kpi-label">{kpi.label}</div>
                 <div className="kpi-value">{kpi.value}</div>
                 <div className="kpi-sub">{kpi.subtext}</div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         </section>
 
